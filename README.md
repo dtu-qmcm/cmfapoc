@@ -1,6 +1,4 @@
----
-title: Compositional Metabolic Flux Analysis - proof of concept
----
+# Compositional Metabolic Flux Analysis - proof of concept
 
 The aim of this project is to demonstrate that compositional data analysis does a better job than non-compositional on a representative dataset.
 

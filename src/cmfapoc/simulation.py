@@ -72,12 +72,3 @@ def simulate(
         "species",
         maintain_order=True,
     ).map_groups(sim_func)["sim_fraction"]
-
-
-if __name__ == "__main__":
-    from pathlib import Path
-
-    root = Path(__file__).parent.parent.parent
-    df = pl.read_csv(root / "data" / "prepared" / "measurements.csv")
-    sim = simulate(df, transformation="alr", error_sd=0.5)
-    print(df.with_columns(simulated_measurement=sim))

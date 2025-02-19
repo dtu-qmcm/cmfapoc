@@ -6,9 +6,12 @@ from pathlib import Path
 from polars._typing import IntoExpr
 import polars as pl
 
+from cmfapoc.simulation import simulate
+
 ROOT = Path(__file__).parent.parent.parent
 RAW_FILE = ROOT / "data" / "raw" / "PivotTable_freqs 1.csv"
 OUT_FILE = ROOT / "data" / "prepared" / "measurements.csv"
+SIM_ERROR_SD = 0.1
 
 
 def normalise(expr: pl.Expr, over: IntoExpr | Sequence[IntoExpr]):
@@ -74,7 +77,18 @@ def prepare_data(raw: pl.DataFrame) -> pl.DataFrame:
     return out
 
 
-if __name__ == "__main__":
+def main():
     raw = pl.read_csv(RAW_FILE)
     data = prepare_data(raw)
+    for transformation in ("alr", "clr", "ilr"):
+        sim = simulate(
+            dataset=data,
+            transformation=transformation,
+            error_sd=SIM_ERROR_SD,
+        )
+        data = data.with_columns(sim.alias(f"sim_fraction_{transformation}"))
     data.write_csv(OUT_FILE)
+
+
+if __name__ == "__main__":
+    main()

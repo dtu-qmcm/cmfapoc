@@ -14,7 +14,11 @@ OUT_FILE = ROOT / "data" / "prepared" / "measurements.csv"
 def normalise(expr: pl.Expr, over: IntoExpr | Sequence[IntoExpr]):
     """Normalise expression by sum over given columns.
 
-    For example:
+    Args:
+        expr: Expression to normalise.
+        over: Columns to normalise over.
+
+    Example:
 
     >>> df = pl.DataFrame(
         {

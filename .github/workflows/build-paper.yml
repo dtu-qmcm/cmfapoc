@@ -1,0 +1,42 @@
+name: 'Build LaTex Document'
+on:
+  push:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: docker://pandoc/core:3.5
+        with:
+          working-directory: paper
+          args: >-
+            --standalone
+            --output=main.tex
+            --template=arxiv-template.tex
+            main.md
+
+      - uses: docker://pandoc/latex:3.5
+        with:
+          working-directory: paper
+          args: >-
+            --standalone
+            --output=main.pdf
+            --template=arxiv-template.tex
+            main.md
+
+      - name: Upload tex
+        uses: actions/upload-artifact@v4
+        with:
+          working-directory: paper
+          name: main.tex
+          path: main.tex
+
+      - name: Upload pdf
+        uses: actions/upload-artifact@v3
+        with:
+          working-directory: paper
+          name: main.pdf
+          path: main.pdf

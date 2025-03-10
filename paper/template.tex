@@ -1,0 +1,86 @@
+% Custom LaTeX template for academic papers with multiple affiliations
+
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{fontspec}
+\usepackage{titling}
+\usepackage{authblk}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{setspace}
+\usepackage{geometry}
+
+% Set page margins
+\geometry{a4paper, margin=1in}
+
+% Customize hyperlinks
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+}
+
+% Title formatting
+\pretitle{\begin{center}\LARGE\bfseries}
+\posttitle{\par\end{center}\vskip 0.5em}
+\preauthor{\begin{center}\large}
+\postauthor{\end{center}}
+\predate{\begin{center}\large}
+\postdate{\par\end{center}\vskip 1em}
+
+% Custom title and author block
+\title{$title$}
+
+% Setup for authors with multiple affiliations
+\renewcommand\Authfont{\normalsize}
+\renewcommand\Affilfont{\small\itshape}
+
+\def\tightlist{}
+
+$for(author)$
+\author[$for(author.affil)$$author.affil$$sep$,$endfor$]{$author.name$}
+$endfor$
+
+$for(affiliation)$
+\affil[$affiliation.num$]{$affiliation.org$}
+$endfor$
+
+\date{$date$}
+
+% Abstract environment
+\renewenvironment{abstract}
+ {\small
+  \begin{center}
+  \bfseries \abstractname\vspace{-.5em}\vspace{0pt}
+  \end{center}
+  \list{}{
+    \setlength{\leftmargin}{1.5cm}%
+    \setlength{\rightmargin}{\leftmargin}%
+  }%
+  \item\relax}
+ {\endlist}
+
+% Document body
+\begin{document}
+
+\maketitle
+
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+
+$body$
+
+$if(bibliography)$
+\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plain$endif$}
+\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
+$endif$
+
+\end{document}

@@ -1,0 +1,151 @@
+\documentclass{article}
+
+\usepackage{arxiv}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{cleveref}       % smart cross-referencing
+\usepackage{lipsum}         % Can be removed after putting your text content
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{doi}
+
+\def\tightlist{}
+
+\title{Compositional Metabolic Flux Analysis}
+
+\date{}
+
+\usepackage{authblk}
+\renewcommand\Authfont{\bfseries}
+\setlength{\affilsep}{0em}
+\newbox{\orcid}\sbox{\orcid}{\includegraphics[scale=0.06]{orcid.pdf}} 
+
+
+\author[1]{
+  \href{asdfasdef}{\usebox{\orcid}\hspace{1mm}Teddy Groves}
+}
+\author[1]{
+  \href{asdfasdef}{\usebox{\orcid}\hspace{1mm}Te Chen}
+}
+\author[1]{
+  \href{asdfasdef}{\usebox{\orcid}\hspace{1mm}Sergi Muyo Abad}
+}
+\author[1]{
+  \href{asdfasdef}{\usebox{\orcid}\hspace{1mm}Nicholas Luke Cowie}
+}
+\author[1]{
+  \href{asdfasdef}{\usebox{\orcid}\hspace{1mm}Daria Volkova}
+}
+\author[2]{
+  \href{asdfasdef}{\usebox{\orcid}\hspace{1mm}Christian Brinch}
+}
+\author[1,3]{
+  \href{asdfasdef}{\usebox{\orcid}\hspace{1mm}Lars Keld Nielsen}
+}
+
+\affil[1]{The Novo Nordisk Center for Biosustainability, DTU, Kongens
+Lyngby, Denmark}
+\affil[2]{National Food Institute, DTU, Kongens Lyngby, Denmark}
+\affil[3]{Australian Institute for Bioengineering and Nanotechnology
+(AIBN), The University of Queensland, St Lucia 4067, Australia}
+
+
+% \renewenvironment{abstract}
+%  {\small
+%   \begin{center}
+%   \bfseries \abstractname\vspace{-.5em}\vspace{0pt}
+%   \end{center}
+%   \list{}{
+%     \setlength{\leftmargin}{1.5cm}%
+%     \setlength{\rightmargin}{\leftmargin}%
+%   }%
+%   \item\relax}
+% {\endlist}
+
+\hypersetup{
+	pdftitle={Compositional Metabolic Flux Analysis},
+	pdfauthor={ Teddy Groves,   Te Chen,   Sergi Muyo Abad,   Nicholas Luke
+Cowie,   Daria Volkova,   Christian Brinch,   Lars Keld Nielsen,   },
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=black,
+    urlcolor=black,
+}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+	Metabolic Flux Analysis aims to infer the values of metabolic fluxes
+from measurements of isotope labelling distributions. Since these
+distributions are positive, sum-constrained and relatively
+low-dimensional, we argue that they should be analysed using specialised
+methods that target compositional data. We illustrate our argument using
+a simple pedagogical example, then show how compositional analysis leads
+to improved results on a typical dataset.
+\end{abstract}
+
+
+\section{Introduction}\label{introduction}
+
+Metabolic flux analysis is the study of
+
+\subsection{Previous work}\label{previous-work}
+
+This section briefly reviews previous work in labelling-based metabolic
+flux analysis. For more detailed review papers see XXXXX
+
+\subsubsection{Experimental methods}\label{experimental-methods}
+
+\subsubsection{The forward problem}\label{the-forward-problem}
+
+\begin{itemize}
+\tightlist
+\item
+  Cumomers
+\item
+  EMU
+\end{itemize}
+
+\subsubsection{Software}\label{software}
+
+\begin{itemize}
+\tightlist
+\item
+  OpenFlux
+\item
+  Freeflux
+\item
+  INCA
+\item
+  13CFlux
+\item
+  \ldots{}
+\end{itemize}
+
+\subsubsection{Bayesian 13C MFA}\label{bayesian-13c-mfa}
+
+\subsection{Problem statement}\label{problem-statement}
+
+The topic of how to statistically model isotope labelling pattern
+measurements has received relatively little attention in the development
+of metabolic flux analysis. Most presentations and software applications
+quantify the discrepancy between a species's measured and predicted
+isotope labelling distribution using a Euclidean distance, and advocate
+choosing a flux configuration whose labelling pattern minimises this
+distance, possibly with per-species and/or per-isotope-equivalence-class
+weights. This is equivalent to using maximum likelihood estimation,
+where the likelihood is given by an indepedent normal distribution
+centered on the predictedc labelling distribution, with error standard
+deviations determined by the weights, i.e., for each species s,
+
+\bibliographystyle{unsrtnat}
+\bibliography{refs.bib}  %%% Uncomment this line and comment out the ``thebibliography'' section below to use the external .bib file (using bibtex) .
+
+\end{document}

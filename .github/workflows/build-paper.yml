@@ -22,34 +22,10 @@ jobs:
             --standalone
             --output=paper/main.tex
             --template=paper/arxiv-template.tex
+            --natbib
             paper/main.md
-
-      # - uses: docker://pandoc/latex:3.5
-      #   with:
-      #     working-directory: paper
-      #     args: >-
-      #       --standalone
-      #       --output=main.pdf
-      #       --template=arxiv-template.tex
-      #       main.md
       
       - uses: wtfjoke/setup-tectonic@v3
       - run: tectonic paper/main.tex
 
-      # - name: Upload tex
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     working-directory: paper
-      #     name: main.tex
-      #     path: paper/main.tex
-
-      # - name: Upload pdf
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     working-directory: paper
-      #     name: main.pdf
-      #     path: paper/main.pdf
-
       - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          add_options: '-f'

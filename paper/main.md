@@ -75,3 +75,4 @@ The topic of how to statistically model isotope labelling pattern measurements h
 
 <!-- There are two key reasons why this approach is flawed in the case where $y_s$ and $\hat{y_s}$ are compositions. First, the Euclidean distance is inappropriate for measuring discrepancies between compositions. Second, the use of an independent error model neglects the fact that composition components are intrinsically correlated. This issue is especially pronounced in the case where there are relatively few composition components. -->
 
+

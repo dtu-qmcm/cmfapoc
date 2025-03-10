@@ -14,9 +14,9 @@ jobs:
           working-directory: paper
           args: >-
             --standalone
-            --output=main.tex
-            --template=arxiv-template.tex
-            main.md
+            --output=paper/main.tex
+            --template=paper/arxiv-template.tex
+            paper/main.md
 
       # - uses: docker://pandoc/latex:3.5
       #   with:

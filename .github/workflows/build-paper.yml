@@ -42,3 +42,5 @@ jobs:
           working-directory: paper
           name: main.pdf
           path: paper/main.pdf
+
+      - uses: stefanzweifel/git-auto-commit-action@v5

@@ -1,5 +1,4 @@
 # paper pdf should be built online by github actions
-paper/main.pdf
 paper/.artifacts*
 
 *DS_Store

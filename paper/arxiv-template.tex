@@ -39,6 +39,14 @@ $for(affiliation)$
 $endfor$
 
 
+$if(csl-refs)$
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newenvironment{cslreferences}%
+  {$if(csl-hanging-indent)$\setlength{\parindent}{0pt}%
+  \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces$endif$}%
+  {\par}
+$endif$
 % \renewenvironment{abstract}
 %  {\small
 %   \begin{center}
@@ -58,6 +66,7 @@ $endfor$
     linkcolor=black,
     filecolor=black,
     urlcolor=black,
+	citecolor=black
 }
 \begin{document}
 \maketitle
@@ -67,9 +76,10 @@ $endfor$
 \end{abstract}
 
 
+
 $body$
 
-\bibliographystyle{unsrtnat}
-\bibliography{$bibliography$}  %%% Uncomment this line and comment out the ``thebibliography'' section below to use the external .bib file (using bibtex) .
 
+\bibliographystyle{unsrtnat}
+\bibliography{$bibliography$}
 \end{document}

@@ -60,11 +60,11 @@ Isotopomers are forms of a compound that differ only by substitution of isotopes
 
 Isotopologues are forms of a compound that differ in atomic mass. For example, the isotopomers [1-13C] glucose and [2-13C] glucose each have five 12C atoms and one 13C atom and therefore belong to the same isotopologue $M_1$ with atomic mass 181.15 g/mol. Isotopologues are important because measurements can often distinguish between isotopologues, but not between isotopomers with the same atomic mass.
 
-## Metabolic Flux Analysis
+## Isotope labelling based Metabolic Flux Analysis
 
-In more detail, 13C MFA considers a known metabolic network consisting of $M$ compounds and $N$ reactions with stoichiometric coefficients $S\in\mathbb{R}^{M\times N}$ representing the amount of each compound consumed and produced by each reaction, plus an atom transition map for each reaction. The atom transition map for a reaction specifies in what order the potentially-labelled atoms occur in each of the reaction's substrates and products.
+In more detail, MFA considers a known metabolic network consisting of $M$ compounds and $N$ reactions with stoichiometric coefficients $S\in\mathbb{R}^{M\times N}$ representing the amount of each compound consumed and produced by each reaction, plus an atom transition map for each reaction. The atom transition map for a reaction specifies in what order the potentially-labelled atoms occur in each of the reaction's substrates and products.
 
-The remaining input for 13C MFA is as follows:
+The remaining input for MFA is as follows:
 
 - Known isotope proportions for some compounds, typically the feed.
 
@@ -84,7 +84,7 @@ p(r_{obs}\mid r(v)) = pdf_{normal}(r_{obs} | r(v), \sigma)
 \label{linear}
 $$
 
-Sometimes a statistical model is not mentioned explicitly, but $v$ is optimised so as to minimise Euclidean distance from $r(v)$ to $r_{obs}$, which produces the same result as optimising by maximising the likelihood [$p(r_{obs}\mid r(v))$](#linear).
+Sometimes a statistical model is not mentioned explicitly, but $v$ is optimised so as to minimise a scaled Euclidean distance from $r(v)$ to $r_{obs}$, which produces the same result as optimising by maximising the likelihood [$p(r_{obs}\mid r(v))$](#linear).
 
 ## Previous work
 
@@ -97,17 +97,16 @@ See the following references:
 - [@longHighresolution13CMetabolic2019] 
 - [@falcoMetabolicFluxAnalysis2022]
 
-### Bayesian 13C MFA
+### Bayesian methods
 
-## Problem statement
+See the following references:
 
-Observed and expected isotopologue distributions have previously been compared using linear models, as [described above](#linear), despite the fact that both are compositions.
+- [@theorellBeCertainUncertainty2017]
+- [@theorellReversibleJumpMCMC2020]
 
-It is well known that, in general, applying non-compositional data analysis methods to compositional data is dangerous because these methods can easily misinterpret constraint-induced correlations [@aitchisonjStatisticalAnalysisCompositional, Ch. 3]. This issue is especially pronounced in the case where there are relatively few composition components.
+### Software
 
-## Existing solutions
-
-Existing implementations of 13C MFA include:
+Existing implementations of MFA include:
 
 - INCA
 - 13CFLUX2
@@ -122,13 +121,18 @@ Existing implementations of 13C MFA include:
 - OpenMebius
 - influx\_s
 
-See [REFERENCE] for reviews of available software implementing 13C MFA.
+See [REFERENCE] for reviews of available software implementing MFA.
 
-We wish to note several limitations of the currently available software:
+There is no previous implementation of compositional regression analysis in the context of MFA; all previous implementations apply a linear model either explicitly as in [@theorellBeCertainUncertainty2017, Eq. 3] or more commonly implicitly through the use of Euclidean distance based optimisation.
 
-- There is no previous implementation of compositional regression analysis in
-the context of 13C MFA; all previous implementations apply a linear model either
-explicitly as in [@theorellBeCertainUncertainty2017, Eq. 3] or more commonly
-implicitly through the use of least-squares optimisation.
-- The only software implementing Bayesian 13C MFA is proprietary.
+# Problem statement
 
+Discrepancies between observed and expected isotopologue distributions have previously been modelled using linear regression models, despite the fact that both are compositions. It is well known that, in general, applying non-compositional data analysis methods to compositional data is dangerous because these methods can easily misinterpret constraint-induced correlations [@aitchisonjStatisticalAnalysisCompositional, Ch. 3]. This issue is especially pronounced in the case where there are relatively few composition components.
+
+We therefore propose modelling augmenting existing labelling-based MFA methods with specialised compositional data analysis. In this section we draw on previous literature where compositional data analysis to discuss common arguments against the use of specialised compositional methods, explaining why we think they don't apply in the case of labelling based MFA.
+
+## Arguments against using compositional methods
+
+# Simple pedagogical example
+
+# Realistic example

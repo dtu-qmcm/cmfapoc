@@ -156,17 +156,18 @@ same isotopologue \(M_1\) with atomic mass 181.15 g/mol. Isotopologues
 are important because measurements can often distinguish between
 isotopologues, but not between isotopomers with the same atomic mass.
 
-\subsection{Metabolic Flux Analysis}\label{metabolic-flux-analysis}
+\subsection{Isotope labelling based Metabolic Flux
+Analysis}\label{isotope-labelling-based-metabolic-flux-analysis}
 
-In more detail, 13C MFA considers a known metabolic network consisting
-of \(M\) compounds and \(N\) reactions with stoichiometric coefficients
+In more detail, MFA considers a known metabolic network consisting of
+\(M\) compounds and \(N\) reactions with stoichiometric coefficients
 \(S\in\mathbb{R}^{M\times N}\) representing the amount of each compound
 consumed and produced by each reaction, plus an atom transition map for
 each reaction. The atom transition map for a reaction specifies in what
 order the potentially-labelled atoms occur in each of the reaction's
 substrates and products.
 
-The remaining input for 13C MFA is as follows:
+The remaining input for MFA is as follows:
 
 \begin{itemize}
 \item
@@ -209,7 +210,7 @@ p(r_{obs}\mid r(v)) = pdf_{normal}(r_{obs} | r(v), \sigma)
 \]
 
 Sometimes a statistical model is not mentioned explicitly, but \(v\) is
-optimised so as to minimise Euclidean distance from \(r(v)\) to
+optimised so as to minimise a scaled Euclidean distance from \(r(v)\) to
 \(r_{obs}\), which produces the same result as optimising by maximising
 the likelihood \hyperref[linear]{\(p(r_{obs}\mid r(v))\)}.
 
@@ -232,24 +233,21 @@ See the following references:
   \citep{falcoMetabolicFluxAnalysis2022}
 \end{itemize}
 
-\subsubsection{Bayesian 13C MFA}\label{bayesian-13c-mfa}
+\subsubsection{Bayesian methods}\label{bayesian-methods}
 
-\subsection{Problem statement}\label{problem-statement}
+See the following references:
 
-Observed and expected isotopologue distributions have previously been
-compared using linear models, as \hyperref[linear]{described above},
-despite the fact that both are compositions.
+\begin{itemize}
+\tightlist
+\item
+  \citep{theorellBeCertainUncertainty2017}
+\item
+  \citep{theorellReversibleJumpMCMC2020}
+\end{itemize}
 
-It is well known that, in general, applying non-compositional data
-analysis methods to compositional data is dangerous because these
-methods can easily misinterpret constraint-induced correlations
-\citep[Ch. 3]{aitchisonjStatisticalAnalysisCompositional}. This issue is
-especially pronounced in the case where there are relatively few
-composition components.
+\subsubsection{Software}\label{software}
 
-\subsection{Existing solutions}\label{existing-solutions}
-
-Existing implementations of 13C MFA include:
+Existing implementations of MFA include:
 
 \begin{itemize}
 \tightlist
@@ -279,22 +277,37 @@ Existing implementations of 13C MFA include:
   influx\_s
 \end{itemize}
 
-See {[}REFERENCE{]} for reviews of available software implementing 13C
+See {[}REFERENCE{]} for reviews of available software implementing MFA.
+
+There is no previous implementation of compositional regression analysis
+in the context of MFA; all previous implementations apply a linear model
+either explicitly as in \citep[Eq. 3]{theorellBeCertainUncertainty2017}
+or more commonly implicitly through the use of Euclidean distance based
+optimisation.
+
+\section{Problem statement}\label{problem-statement}
+
+Discrepancies between observed and expected isotopologue distributions
+have previously been modelled using linear regression models, despite
+the fact that both are compositions. It is well known that, in general,
+applying non-compositional data analysis methods to compositional data
+is dangerous because these methods can easily misinterpret
+constraint-induced correlations \citep[Ch.
+3]{aitchisonjStatisticalAnalysisCompositional}. This issue is especially
+pronounced in the case where there are relatively few composition
+components.
+
+We therefore propose modelling augmenting existing labelling-based MFA
+methods with specialised compositional data analysis. In this section we
+draw on previous literature where compositional data analysis to discuss
+common arguments against the use of specialised compositional methods,
+explaining why we think they don't apply in the case of labelling based
 MFA.
 
-We wish to note several limitations of the currently available software:
+\subsection{Arguments against using compositional
+methods}\label{arguments-against-using-compositional-methods}
 
-\begin{itemize}
-\tightlist
-\item
-  There is no previous implementation of compositional regression
-  analysis in the context of 13C MFA; all previous implementations apply
-  a linear model either explicitly as in \citep[Eq.
-  3]{theorellBeCertainUncertainty2017} or more commonly implicitly
-  through the use of least-squares optimisation.
-\item
-  The only software implementing Bayesian 13C MFA is proprietary.
-\end{itemize}
+\section{Simple pedagogical example}\label{simple-pedagogical-example}
 
 
 \bibliographystyle{unsrtnat}

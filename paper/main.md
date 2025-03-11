@@ -1,6 +1,7 @@
 ---
 title: Compositional Metabolic Flux Analysis
 bibliography: refs.bib
+graphics: yes
 author:
   - name: Teddy Groves
     affil: [1]
@@ -37,118 +38,72 @@ abstract: |
 
 # Introduction
 
-Labelling-based Metabolic flux analysis is the study of
+The rates, or "fluxes", of metabolic reactions are key to understanding how cells behave. The rates of internal metabolic reactions, which create and destroy chemicals inside of cells, are particularly interesting, but difficult to measure directly. Isotope labelling experiments make it possible to infer these internal fluxes indirectly, thanks to the fact that metabolic reactions split and join molecules in predictable ways.
 
-## Previous work
+Specifically, given a known "atom mapping" describing how each reaction in a network moves potentially-labelled atoms, a specification of fluxes, and some known isotope distributions (typically the feed), one can calculate expected isotope distributions for internal metabolites. These internal isotope distributions can also be measured, for example using liquid chromatography and mass spectrometry. Comparing measured and expected isotope distributions makes it possible to say infer flux specifications.
 
-This section briefly reviews previous work in labelling-based metabolic flux analysis. For more detailed review papers see XXXXX
+This technique has existed in its modern form for a while, leading to impressive results, but we think that a crucial step is missing. Measured and expected isotope distributions are compositions, but they have not previously been analysed using compositional methods. 
 
-### Experimental methods
-### The forward problem
-- Cumomers
-- EMU
+## Isotopes, isotopomers and isotopologues
 
-### Software
-- OpenFlux
-- Freeflux
-- INCA
-- 13CFlux
-- ...
+Isotopes are atoms whose nuclei have the same number of protons but different numbers of neutrons. Isotopes of the same element have similar chemical properties, but have different atomic masses and physical properties. For example, carbon has three naturally occurring isotopes: 12C, 13C and 14C, with respective atomic masses 12, 13 and 14. 14C occurs in negligible quantities, and the natural ratio of 12C to 13C is known, making carbon suitable for isotope labelling experiments where 12C is artificially replaced by 13C.
 
-### Bayesian 13C MFA
+Isotopomers are forms of a compound that differ only by substitution of isotopes. For example, [1-13C] glucose and [2-13C] glucose are isotopomers of glucose that differ only in the isotopes of the carbon atoms in positions 1 and 2 (see [figure below](#glucose)). In general, for every $a$ occurrences of an atom with $I$ isotopes in a compound, there are $I^a$ corresponding isotopomers. For example, glucose has six carbon atoms: assuming only 12C and 13C isotopes are present, there are $2^6=64$ carbon isotopomers.
 
-## Problem statement
+\begin{figure}[!h]
+\centering
+\includegraphics[width=0.4\textwidth, height=!]{img/1-13C-glucose.png}
+\includegraphics[width=0.4\textwidth, height=!]{img/2-13C-glucose.png}
+\caption{Left: [1-13C] glucose Right: [2-13C] glucose}
+\label{glucose}
+\end{figure}
 
-The topic of how to statistically model isotope labelling pattern measurements has received relatively little attention in the development of metabolic flux analysis. Most presentations and software applications quantify the discrepancy between a species's measured and predicted isotope labelling distribution using a Euclidean distance, and advocate choosing a flux configuration whose labelling pattern minimises this distance, possibly with per-species and/or per-isotope-equivalence-class weights. This is equivalent to using maximum likelihood estimation, where the likelihood is given by an indepedent normal distribution centered on the predictedc labelling distribution, with error standard deviations determined by the weights, i.e., for each species s,
+Isotopologues are forms of a compound that differ in atomic mass. For example, the isotopomers [1-13C] glucose and [2-13C] glucose each have five 12C atoms and one 13C atom and therefore belong to the same isotopologue $M_1$ with atomic mass 181.15 g/mol. Isotopologues are important because measurements can often distinguish between isotopologues, but not between isotopomers with the same atomic mass.
 
-$$
-y_s \sim N(\hat{y_s}, \sigma_s)
-$$
+## Metabolic Flux Analysis
 
-where $y_s$ is the observed labelling distribution for species $s$, $\hat{y_s}$ is the predicted labelling distribution and $sigma_s$ is a vector of standard deviations.
-
-There are two key reasons why this approach is flawed in the case where $y_s$ and $\hat{y_s}$ are compositions. First, the Euclidean distance is inappropriate for measuring discrepancies between compositions. Second, the use of an independent error model neglects the fact that composition components are intrinsically correlated. This issue is especially pronounced in the case where there are relatively few composition components.
-
-## Isotopes, isotopologues and mass isotopologues
-
-Isotopes are atoms whose nuclei have the same number of protons but different
-numbers of neutrons. Isotopes instantiate the same element and have very
-similar chemical properties, but have different atomic masses and physical
-properties. For example, Carbon has three naturally occurring isotopes: 12C, 13C
-and 14C, with respective atomic masses 12, 13 and 14. 14C occurs in negligible
-quantities, and the natural ratio of 12C to 13C is known, making carbon suitable
-for isotope labelling experiments where 12C is artificially replaced with 13C.
-
-Isotopologues are forms of a compound that differ only by substitution of
-isotopes. For example, [1-13C] glucose, [U-13C] glucose and [2-13C] glucose are
-isotopologues that differ only in the isotopes of the carbon atoms in positions
-1 and 2. In general, for a compound with $A$ occurrences of an atom with $I$
-isotopes, there are $I^A$ corresponding isotopologues. For example, glucose has
-six carbon atoms: assuming only 12C and 13C isotopes are present, there are
-$2^6$ carbon isotopologues.
-
-A mass isotopologue is an equivalence class of isotopologues that share the same
-atomic mass. For example, [1-13C] glucose and [2-13C] glucose each have five
-12C atoms and one 13C atom and therefore belong to the glucose mass isotopologue
-$M_1$ with atomic mass 181.15 g/mol. Mass isotopologues are important because
-measurements can often distinguish between mass isotopologues, but not between
-isotopologues with the same atomic mass.
-
-## 13C labelling experiments
-
-## 13C Metabolic Flux Analysis
-
-13C MFA considers a known metabolic network consisting of $M$ compounds and
-$N$ reactions with stoichiometric coefficients $S\in\mathbb{R}^{M\times N}$
-representing the amount of each compound consumed and produced by each reaction,
-plus an atom transition map for each reaction. The atom transition map for a
-reaction specifies in what order the potentially-labelled atoms occur in each of
-the reaction's substrates and products.
+In more detail, 13C MFA considers a known metabolic network consisting of $M$ compounds and $N$ reactions with stoichiometric coefficients $S\in\mathbb{R}^{M\times N}$ representing the amount of each compound consumed and produced by each reaction, plus an atom transition map for each reaction. The atom transition map for a reaction specifies in what order the potentially-labelled atoms occur in each of the reaction's substrates and products.
 
 The remaining input for 13C MFA is as follows:
 
 - Known isotope proportions for some compounds, typically the feed.
 
-- Measured fluxes for some reactions, possibly with known measurement error.
+- Measured fluxes for some reactions.
 
-- Measured mass isotopologue proportions for some compounds, possibly with known
+- Measured isotopologue proportions for some compounds, possibly with known
 measurement error.
 
-The task of inferring the label pattern corresponding to a known flux assignment is known as the "forward problem". [REFERENCE] shows how, assuming that the network is in a metabolic and isotopic steady state, so that neither the concentrations of the compounds nor the distributions of isotopologues are changing, it is possible to calculate the isotopologue distribution for each compound given a known flux; in this way one can calculate the labelling pattern $r(v)$ corresponding to any flux assignment $v$.
+The task of inferring the label pattern corresponding to a known flux assignment is known as the "forward problem". [REFERENCE - Wiechert?] shows how, assuming that the network is in a metabolic and isotopic steady state, so that neither the concentrations of the compounds nor the distributions of isotopomers are changing, one can calculate the isotopomer distribution $r(v)$ for each compound given a flux specification $v$.
 
-Unfortunately, solving the forward problem in terms of isotopologue is of limited use for real applications due to the prohibitively large number of isotopomers that need to be considered. As a result of this difficulty there has been considerable interest in more concise representations of the forward problem [REFERNECES]. Below [INTERNAL REFERENCE] we consider in detail the "elementary metabolite unit" representation introduced in [@antoniewiczElementaryMetaboliteUnits2007].
+Solving the forward problem in terms of isotopomers is of limited use in real applications due to the prohibitively large number of isotopomers that need to be considered. As a result of this difficulty there has been considerable interest in more concise representations of the forward problem [REFERNECES]. The most widely used of these is the "elementary metabolite unit" representation introduced in [@antoniewiczElementaryMetaboliteUnits2007].
 
-The inverse problem of inferring steady state fluxes from measured isotopologue distributions can be solved using a statistical model that links these measurements with latent parameters representing flux configurations. In general, such a model specifies the probability $p(r_{obs}\mid r(v))$ of observing labelling pattern $r_{obs}$ given a true flux assignment $v$ and true labelling pattern $r(v)$. For example, assuming a linear model, or equivalently optimising $v$ by least squares, yields the following relationship:
+The inverse problem of inferring steady state fluxes from measured isotopologue distributions can be solved using a statistical model that links these measurements with latent parameters representing flux configurations. In general, such a model specifies the probability $p(r_{obs}\mid r(v))$ of observing labelling pattern $r_{obs}$ given a true flux assignment $v$ and true labelling pattern $r(v)$. For example, assuming an independent linear model with measurement standard deviation vector $\sigma$ yields the following relationship:
 
 $$
-r_{obs} \sim N(r(v), \Sigma)
+p(r_{obs}\mid r(v)) = pdf_{normal}(r_{obs} | r(v), \sigma)
+\label{linear}
 $$
 
+Sometimes a statistical model is not mentioned explicitly, but $v$ is optimised so as to minimise Euclidean distance from $r(v)$ to $r_{obs}$, which produces the same result as optimising by maximising the likelihood [$p(r_{obs}\mid r(v))$](#linear).
 
-## The Elementary Metabolite Unit representation
+## Previous work
 
-## Compositional Regression
+This section briefly reviews previous work in labelling-based metabolic flux analysis. For more detailed review papers see [@daiUnderstandingMetabolismFlux2017], [@falcoMetabolicFluxAnalysis2022].
 
-Compositional data is data that is subject to a unit-sum constraint. For
-example, a compositional dataset might record the amount of fat, protein and
-other ingredients in some blocks of butter as proportions of the total mass of
-each block. These proportions are constrained to sum to exactly one.
+### Experimental methods
 
-It is well known that, in general, applying non-compositional data
-analysis methods to compositional data is dangerous because these
-methods can easily misinterpret constraint-induced correlations
-[@aitchisonjStatisticalAnalysisCompositional, Ch. 3].
+See the following references:
 
-Compositional regression methods employ constrained measurement distributions
-to analyse compositional data, allowing induced correlations to be accounted
-for naturally. Examples of such distributions include the logistic-normal and
-Dirichlet distributions [@aitchisonjStatisticalAnalysisCompositional, Ch. 3]
-among others.
+- [@longHighresolution13CMetabolic2019] 
+- [@falcoMetabolicFluxAnalysis2022]
 
-Compositional regression methods are appropriate for 13C MFA because mass
-isotopologue distribution vectors are compositional. We therefore considered it
-likely that the standard practice of applying non-compositional statistical
-analysis to such data would produce incorrect results.
+### Bayesian 13C MFA
+
+## Problem statement
+
+Observed and expected isotopologue distributions have previously been compared using linear models, as [described above](#linear), despite the fact that both are compositions.
+
+It is well known that, in general, applying non-compositional data analysis methods to compositional data is dangerous because these methods can easily misinterpret constraint-induced correlations [@aitchisonjStatisticalAnalysisCompositional, Ch. 3]. This issue is especially pronounced in the case where there are relatively few composition components.
 
 ## Existing solutions
 
@@ -167,9 +122,9 @@ Existing implementations of 13C MFA include:
 - OpenMebius
 - influx\_s
 
-See [@daiUnderstandingMetabolismFlux2017], [@falcoMetabolicFluxAnalysis2022 ]for
-reviews of available software implementing 13C MFA. We wish to note several
-limitations of the currently available software:
+See [REFERENCE] for reviews of available software implementing 13C MFA.
+
+We wish to note several limitations of the currently available software:
 
 - There is no previous implementation of compositional regression analysis in
 the context of 13C MFA; all previous implementations apply a linear model either

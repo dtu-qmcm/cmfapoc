@@ -167,11 +167,17 @@ each reaction. The atom transition map for a reaction specifies in what
 order the potentially-labelled atoms occur in each of the reaction's
 substrates and products.
 
+In this study we focus on the most straightforward case, where it is
+safe to assume that the network is in isotopic and metabolic steady
+state. This means that the concentrations of internal metabolites and
+isotopomers are constant.
+
 The remaining input for MFA is as follows:
 
 \begin{itemize}
 \item
-  Known isotope proportions for some compounds, typically the feed.
+  Known isotopomer proportions for some compounds, typically external
+  ones like the feed.
 \item
   Measured fluxes for some reactions.
 \item
@@ -179,30 +185,34 @@ The remaining input for MFA is as follows:
   known measurement error.
 \end{itemize}
 
-The task of inferring the label pattern corresponding to a known flux
-assignment is known as the ``forward problem''. {[}REFERENCE -
-Wiechert?{]} shows how, assuming that the network is in a metabolic and
-isotopic steady state, so that neither the concentrations of the
-compounds nor the distributions of isotopomers are changing, one can
-calculate the isotopomer distribution \(r(v)\) for each compound given a
-flux specification \(v\).
+The ``forward problem'' of inferring the label pattern given a flux
+specification can be solved by writing down a balance equation
+describing the rate of change of each isotopomer in the network. These
+equations can be found by combining the atom map and stoichiometric
+matrix to produce a matrix \(S_i\in\mathbb{R}^{I\times N}\) of
+stoichiometric coefficients for isotopomers. At isotopic and metabolic
+steady state we have \(Sv=0\), giving \(N\) balance equations. Given
+some known isotopomer proportions, other isotopomer proportions can be
+calculated by solving these equations.
 
-Solving the forward problem in terms of isotopomers is of limited use in
-real applications due to the prohibitively large number of isotopomers
-that need to be considered. As a result of this difficulty there has
-been considerable interest in more concise representations of the
-forward problem {[}REFERNECES{]}. The most widely used of these is the
+While conceptually simple, this approach to solving the forward problem
+is typically unfeasible due to the prohibitively large number of
+isotopomers. Practical applications therefore require a method to solve
+the forward problem more simply: see
+\citep[§3.1]{daiUnderstandingMetabolismFlux2017} for an overview of
+approaches to this problem. The most widely used of these is the
 ``elementary metabolite unit'' representation introduced in
 \citep{antoniewiczElementaryMetaboliteUnits2007}.
 
 The inverse problem of inferring steady state fluxes from measured
-isotopologue distributions can be solved using a statistical model that
-links these measurements with latent parameters representing flux
-configurations. In general, such a model specifies the probability
-\(p(r_{obs}\mid r(v))\) of observing labelling pattern \(r_{obs}\) given
-a true flux assignment \(v\) and true labelling pattern \(r(v)\). For
-example, assuming an independent linear model with measurement standard
-deviation vector \(\sigma\) yields the following relationship:
+isotopomer or isotopologue distributions can be solved using a
+statistical model that links these measurements with latent parameters
+representing flux configurations. In general, such a model specifies the
+probability \(p(r_{obs}\mid r(v))\) of observing labelling pattern
+\(r_{obs}\) given a true flux assignment \(v\) and true labelling
+pattern \(r(v)\). For example, assuming an independent linear model with
+measurement standard deviation vector \(\sigma\) yields the following
+relationship:
 
 \[
 p(r_{obs}\mid r(v)) = pdf_{normal}(r_{obs} | r(v), \sigma)
@@ -210,7 +220,7 @@ p(r_{obs}\mid r(v)) = pdf_{normal}(r_{obs} | r(v), \sigma)
 \]
 
 Sometimes a statistical model is not mentioned explicitly, but \(v\) is
-optimised so as to minimise a scaled Euclidean distance from \(r(v)\) to
+optimised by minimising a scaled Euclidean distance from \(r(v)\) to
 \(r_{obs}\), which produces the same result as optimising by maximising
 the likelihood \hyperref[linear]{\(p(r_{obs}\mid r(v))\)}.
 

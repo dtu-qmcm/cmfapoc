@@ -138,9 +138,9 @@ def prepare_data_daria(raw: pl.DataFrame) -> pl.DataFrame:
 
 
 def main():
-    for (name, raw_file), prepfunc in zip(
-        RAW_FILES.items(), [prepare_data_sergi, prepare_data_daria]
-    ):
+    name_to_func = {"daria": prepare_data_daria, "sergi": prepare_data_sergi}
+    for name, raw_file in RAW_FILES.items():
+        prepfunc = name_to_func[name]
         raw = pl.read_csv(raw_file)
         prepared = prepfunc(raw)
         prepared.write_csv(OUT_DIR / f"measurements-{name}.csv")

@@ -13,8 +13,12 @@ ROOT = Path(__file__).parent.parent.parent
 RAW_DIR = ROOT / "data" / "raw"
 OUT_DIR = ROOT / "data" / "prepared"
 RAW_FILES = {
-    "sergi": RAW_DIR / "PivotTable_freqs 1.csv",
-    "daria": RAW_DIR / "processed_calibration_measurements_HEK_LCMS.csv",
+    "sergi": (RAW_DIR / "PivotTable_freqs 1.csv",),
+    "daria": (
+        RAW_DIR / "250218_Fluxomics_split1_900uL_g3p_excluded.csv",
+        RAW_DIR / "250218_Fluxomics_split2_900uL.csv",
+        RAW_DIR / "theoretical.csv",
+    ),
 }
 SIM_ERROR_SD = 0.1
 
@@ -89,7 +93,11 @@ def prepare_data_sergi(raw: pl.DataFrame) -> pl.DataFrame:
     return out
 
 
-def prepare_data_daria(raw: pl.DataFrame) -> pl.DataFrame:
+def prepare_data_daria(
+    raw1: pl.DataFrame,
+    raw2: pl.DataFrame,
+    natural: pl.DataFrame,
+) -> pl.DataFrame:
     """Prepare Daria's calibration data."""
     outcols = [
         "sample",
@@ -99,50 +107,66 @@ def prepare_data_daria(raw: pl.DataFrame) -> pl.DataFrame:
         "measured_fraction",
         "natural_fraction",
     ]
+    metabolites_to_exclude = ["6pgc", "oaa", "g3p"]
 
-    out = raw.rename(
-        {
-            "met": "metabolite",
-            "Theoretical": "theoretical_fraction",
-            "Height": "measurement",
-            "sample_group": "sample",
-        }
-    ).with_columns(isotopologue=pl.col("ID").str.tail(1).cast(pl.Int8))
+    filter_natural = ~pl.col("ID").str.contains_any(metabolites_to_exclude)
+    filter_msts = pl.col("Sample Name").str.contains("_1x_") & ~pl.col(
+        "Component Group Name"
+    ).str.contains_any(metabolites_to_exclude)
     natural = (
-        out.group_by(["metabolite", "isotopologue"])
-        .agg(pl.col("theoretical_fraction").first())
+        natural.filter(filter_natural)
         .with_columns(
-            natural_fraction=close(pl.col("theoretical_fraction"), "metabolite")
+            isotopologue=pl.col("ID").str.extract(".*_(m\\d+)$"),
+            metabolite=pl.col("ID").str.extract("(.*)_m\\d+$"),
         )
+        .with_columns(
+            natural_fraction=close(pl.col("Theoretical"), over="metabolite")
+        )
+    )
+    raw = pl.concat([raw1, raw2])
+    new_names = {
+        "Height": "measurement",
+        "Sample Name": "sample",
+        "Component Name": "component",
+        "Component Group Name": "metabolite",
+        "Sample Type": "sample_type",
+    }
+    msts = (
+        raw.filter(filter_msts)
+        .rename(new_names)
+        .with_columns(
+            measurement=pl.col("measurement").cast(pl.Float64, strict=False),
+            split=pl.col("sample").str.extract("split(\\d)"),
+            injection=pl.col("sample").str.extract("inj(\\d)"),
+            qc_number=pl.col("sample").str.extract("(QC\\d?)"),
+            isotopologue=pl.col("component").str.extract("(m\\d)"),
+        )
+        .group_by("sample", "metabolite", "isotopologue")
+        .agg(pl.col("measurement").sum())
     )
     natural_with_samples = natural.join(
-        out[["metabolite", "sample"]].unique(),
+        msts[["metabolite", "sample"]].unique(),
         on="metabolite",
         how="inner",
-    )
-    out = out.join(
+    )[["sample", "metabolite", "isotopologue", "natural_fraction"]]
+    return msts.join(
         natural_with_samples,
-        on=["metabolite", "isotopologue", "sample"],
+        on=["sample", "metabolite", "isotopologue"],
         how="right",
-    )
-    out = (
-        out.with_columns(
-            measured_fraction=close(
-                pl.col("measurement"), over=["metabolite", "sample"]
-            )
+    ).with_columns(
+        measured_fraction=close(
+            pl.col("measurement"),
+            over=["sample", "metabolite"],
         )
-        .select(outcols)
-        .sort(["sample", "metabolite", "isotopologue"])
     )
-    return out
 
 
 def main():
     name_to_func = {"daria": prepare_data_daria, "sergi": prepare_data_sergi}
-    for name, raw_file in RAW_FILES.items():
+    for name, raw_files in RAW_FILES.items():
         prepfunc = name_to_func[name]
-        raw = pl.read_csv(raw_file)
-        prepared = prepfunc(raw)
+        raw = (pl.read_csv(rf) for rf in raw_files)
+        prepared = prepfunc(*raw)
         prepared.write_csv(OUT_DIR / f"measurements-{name}.csv")
 
 

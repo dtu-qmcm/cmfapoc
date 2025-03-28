@@ -99,14 +99,6 @@ def prepare_data_daria(
     natural: pl.DataFrame,
 ) -> pl.DataFrame:
     """Prepare Daria's calibration data."""
-    outcols = [
-        "sample",
-        "metabolite",
-        "isotopologue",
-        "measurement",
-        "measured_fraction",
-        "natural_fraction",
-    ]
     metabolites_to_exclude = ["6pgc", "oaa", "g3p"]
 
     filter_natural = ~pl.col("ID").str.contains_any(metabolites_to_exclude)

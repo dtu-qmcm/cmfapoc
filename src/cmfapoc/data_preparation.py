@@ -2,8 +2,7 @@
 
 from collections.abc import Sequence
 from pathlib import Path
-
-from pandas.io.formats.printing import pprint_thing_encoded
+import logging
 from polars._typing import IntoExpr
 import polars as pl
 
@@ -54,8 +53,21 @@ def close(expr: pl.Expr, over: IntoExpr | Sequence[IntoExpr]):
 
 
 def prepare_data_sergi(raw: pl.DataFrame) -> pl.DataFrame:
-    """Prepare data."""
-    out = (
+    """Process Sergi's fluxomics data by:
+
+    1. Renaming and filtering columns
+    2. Unpivoting measurement data
+    3. Adding simulated fractions with different transformations
+    4. Calculating C12 control flags
+
+    Args:
+        raw: Raw input data from CSV files
+
+    Returns:
+        Processed DataFrame with raw and simulated measurements
+    """
+    # Initial cleaning and reshaping
+    cleaned = (
         raw.rename(
             {
                 "component_name": "isotopologue",
@@ -83,13 +95,9 @@ def prepare_data_sergi(raw: pl.DataFrame) -> pl.DataFrame:
         )
         .with_columns(is_c12=pl.col("sample_id") == 0)
     )
-    for transformation in ("alr", "clr", "ilr"):
-        sim = simulate(
-            dataset=out,
-            transformation=transformation,
-            error_sd=SIM_ERROR_SD,
-        )
-        out = out.with_columns(sim.alias(f"sim_fraction_{transformation}"))
+
+    # Add simulated fractions for each transformation type
+    out = _add_simulated_fractions(cleaned)
     return out
 
 
@@ -141,24 +149,45 @@ def prepare_data_daria(
         on="metabolite",
         how="inner",
     )[["sample", "metabolite", "isotopologue", "natural_fraction"]]
-    return msts.join(
-        natural_with_samples,
-        on=["sample", "metabolite", "isotopologue"],
-        how="right",
-    ).with_columns(
-        measured_fraction=close(
-            pl.col("measurement"),
-            over=["sample", "metabolite"],
+    return (
+        msts.join(
+            natural_with_samples,
+            on=["sample", "metabolite", "isotopologue"],
+            how="right",
+        )
+        .with_columns(measurement=pl.col("measurement").replace(0, None))
+        .with_columns(
+            measured_fraction=close(
+                pl.col("measurement"),
+                over=["sample", "metabolite"],
+            )
         )
     )
 
 
-def main():
+def _add_simulated_fractions(df: pl.DataFrame) -> pl.DataFrame:
+    """Add simulated measurement fractions using different CLR transformations."""
+    for transformation in ("alr", "clr", "ilr"):
+        sim = simulate(
+            dataset=df,
+            transformation=transformation,
+            error_sd=SIM_ERROR_SD,
+        )
+        df = df.with_columns(sim.alias(f"sim_fraction_{transformation}"))
+    return df
+
+
+def main() -> None:
     name_to_func = {"daria": prepare_data_daria, "sergi": prepare_data_sergi}
     for name, raw_files in RAW_FILES.items():
         prepfunc = name_to_func[name]
-        raw = (pl.read_csv(rf) for rf in raw_files)
-        prepared = prepfunc(*raw)
+        # Read and process data with progress logging
+        logging.basicConfig(level=logging.INFO)
+        logger = logging.getLogger(__name__)
+
+        logger.info(f"Processing {name} dataset")
+        raw_dfs = [pl.read_csv(rf) for rf in raw_files]
+        prepared = prepfunc(*raw_dfs)
         prepared.write_csv(OUT_DIR / f"measurements-{name}.csv")
 
 

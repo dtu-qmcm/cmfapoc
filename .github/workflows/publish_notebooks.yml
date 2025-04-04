@@ -18,7 +18,7 @@ jobs:
         run: uv sync --all-extras --dev
       - name: 📄 Export notebook
         run: |
-          uv run marimo export html-wasm notebooks/calibration.py -o _site/calibration.html --mode run
+          uv run marimo export html notebooks/calibration.py -o _site/calibration.html --mode run
       - name: 📦 Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:

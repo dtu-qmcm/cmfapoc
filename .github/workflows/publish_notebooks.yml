@@ -16,9 +16,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install the project
         run: uv sync --all-extras --dev
-      - name: 📄 Export notebook
+      - name: 📄 Export notebook as static html
         run: |
-          uv run marimo export html notebooks/calibration.py -o _site/calibration.html --mode run
+          uv run marimo export html notebooks/calibration.py -o _site/calibration.html
       - name: 📦 Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:

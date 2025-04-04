@@ -5,7 +5,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # ... checkout and install dependencies
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        uses: 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          # Install a specific version of uv.
+          version: "0.5.5"
+          python-version: ${{ matrix.python-version }}
+      - name: Install the project
+        run: uv sync --all-extras --dev
       - name: 📄 Export notebook
         run: |
           marimo export html-wasm notebooks/calibration.py -o notebooks/calibration.html --mode run

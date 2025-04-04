@@ -20,6 +20,8 @@ jobs:
           uv run marimo export html-wasm docs/calibration.py -o docs/calibration.html --mode run
       - name: 📦 Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/
 
   deploy:
     needs: build

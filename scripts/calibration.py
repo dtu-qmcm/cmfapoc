@@ -28,7 +28,7 @@ def _(mo):
         r"""
         ## Introduction
 
-        First we load some libraries and our calibration dataset, then check that the number of measurement sets is as expected. 
+        First we load some libraries and our calibration dataset, then check that the number of measurement sets is as expected.
         """
     )
     return
@@ -176,7 +176,7 @@ def _(mo):
 
         Applying the CLR transformation to the non-zero measurements shows an interesting pattern: the residuals are more dispersed when the absolute measurement is lower. This is roughly what we expect given the spectrometer's lower detection limit.
 
-        However, it is hard to diagnose biases from the CLR data because it is centered around zero per measurement, as shown in the cell below. 
+        However, it is hard to diagnose biases from the CLR data because it is centered around zero per measurement, as shown in the cell below.
         """
     )
     return
@@ -228,7 +228,7 @@ def _(msts_no_zeros_clr, plt):
         ax.set(xlabel="Total measurement (raw units)", ylabel="Residual", title=title)
 
     plot_sct(msts_no_zeros_clr, "CLR residuals")
-    plt.show()
+    plt.gcf()
     return (plot_sct,)
 
 
@@ -282,7 +282,7 @@ def _(alr, msts_no_zeros, pl):
 @app.cell
 def _(msts_no_zeros_alr, plot_sct, plt):
     plot_sct(msts_no_zeros_alr, "ALR residuals")
-    plt.show()
+    plt.gcf()
     return
 
 
@@ -347,7 +347,7 @@ def _(NDArray, ilr, msts_no_zeros, np, pl, sbp_basis):
 @app.cell
 def _(msts_no_zeros_ilr, plot_sct, plt):
     plot_sct(msts_no_zeros_ilr, "ILR residuals")
-    plt.show()
+    plt.gcf()
     return
 
 
@@ -363,7 +363,7 @@ def _(mo):
         r"""
         ## What next?
 
-        We aren't totally sure how we should model the apparent bias in the ILR measurements. One option is to include the total measurement as a covariate in a model of the transformed measurements. Another would be to make a model with both absolute and compositional modules. The second option would potentially allow a more explicit model of the biasing process, but seems like it might be a bit trickier to implement. 
+        We aren't totally sure how we should model the apparent bias in the ILR measurements. One option is to include the total measurement as a covariate in a model of the transformed measurements. Another would be to make a model with both absolute and compositional modules. The second option would potentially allow a more explicit model of the biasing process, but seems like it might be a bit trickier to implement.
         """
     )
     return

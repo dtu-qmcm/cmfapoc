@@ -1,6 +1,7 @@
 name: "Publish marimo notebooks"
 on:
   push:
+    branches: ['main']
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,11 +18,11 @@ jobs:
         run: uv sync --all-extras --dev
       - name: 📄 Export notebook
         run: |
-          uv run marimo export html-wasm docs/calibration.py -o docs/calibration.html --mode run
+          uv run marimo export html-wasm notebooks/calibration.py -o _site/calibration.html --mode run
       - name: 📦 Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/
+          path: _site
 
   deploy:
     needs: build

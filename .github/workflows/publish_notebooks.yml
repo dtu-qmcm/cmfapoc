@@ -21,7 +21,7 @@ jobs:
       - name: 📦 Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: notebooks/calibration.html
+          path: notebooks/
 
   deploy:
     needs: build

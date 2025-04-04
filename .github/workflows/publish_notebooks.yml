@@ -1,3 +1,6 @@
+name: "Publish marimo notebooks"
+on:
+  push:
 jobs:
   build:
     runs-on: ubuntu-latest
